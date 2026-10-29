@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Connecting to your TV</title>
+<style>
+  body{margin:0;min-height:100vh;display:grid;place-items:center;padding:24px;box-sizing:border-box;
+       background:#0b1230;color:#f3f0ea;font:17px -apple-system,system-ui,sans-serif;text-align:center}
+  h1{font:300 32px Georgia,"New York",serif;margin:0 0 10px}
+  p{opacity:.72;max-width:30ch;margin:0 auto;line-height:1.5}
+</style>
+</head>
+<body>
+<div>
+  <h1 id="title">Connecting to your TV…</h1>
+  <p id="note">Keep this page open for a moment.</p>
+</div>
+<script>
+  // Spotify sends the phone here after sign-in. The Apple TV's address travels in `state`
+  // ("<random>~<ip>:<port>"), so pass everything along to the TV on the home network.
+  (function () {
+    var params = new URLSearchParams(location.search);
+    var state = params.get('state') || '';
+    var tv = state.split('~')[1];
+    var title = document.getElementById('title');
+    var note = document.getElementById('note');
+    if (!/^[0-9.]+:[0-9]+$/.test(tv || '')) {
+      title.textContent = 'Something went wrong';
+      note.textContent = 'Scan the code on your TV again.';
+      return;
+    }
+    setTimeout(function () {
+      title.textContent = 'Still connecting…';
+      note.textContent = 'Make sure your phone is on the same Wi-Fi as your Apple TV, then scan the code again.';
+    }, 6000);
+    location.replace('http://' + tv + '/callback' + location.search);
+  })();
+</script>
+</body>
+</html>
